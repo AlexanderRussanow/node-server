@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <title>Posts
+   </title>
+   <link rel="preconnect" href="https://fonts.gstatic.com">
+   <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+   <style>
+      body {
+         display: flex;
+         padding-top: 80px;
+         min-height: calc(100vh - 90px);
+         align-items: center;
+         justify-content: center;
+         flex-direction: column;
+         font-family: 'Roboto', sans-serif;
+         font-size: 20px;
+         background: linear-gradient(to right, #90AE90, #88bddd);
+         color: #fff;
+      }
+
+      nav {
+         position: absolute;
+         top: 0;
+         left: 0;
+         right: 0;
+         min-height: 50px;
+         display: flex;
+         justify-content: flex-start;
+         background-color: #FFFFFF;
+         margin-bottom: auto;
+      }
+
+      nav ul {
+         margin: 0;
+         padding: 0;
+         display: flex;
+      }
+
+      nav li {
+         list-style: none;
+      }
+
+      nav a {
+         text-decoration: none;
+         color: black;
+         min-height: 60px;
+         display: block;
+         padding: 10px 20px;
+         line-height: 60px;
+      }
+   </style>
+</head>
+
+<body>
+   <%- include('./../views/common/navbar.ejs') %>
+
+      <h1>All post here🤌</h1>
+      <p>Wow...</p>
+
+      <ul>
+         <% if (posts.length) { %>
+            <% posts.forEach(({ id, title, createdAt, content, author })=> { %>
+               <li>
+                  <article>
+                     <h2>
+                        <a href="/post/<%= id %>">
+                           <%= title %>
+                        </a>
+                     </h2>
+                     <p>
+                        <%= content %>
+                     </p>
+                     <div class="info">
+                        <span>
+                           <%= createdAt.toLocaleDateString() %>
+                        </span>
+                        <span>
+                           <%= author %>
+                        </span>
+                     </div>
+                     <button class="btn-delete" data-id="<%= id %>">
+                        <i class="fas fa-trash-alt" data-id="<%= id %>"></i>
+                     </button>
+                  </article>
+               </li>
+               <% }) %>
+                  <% } %>
+      </ul>
+
+      <script>
+         document.addEventListener('click', (e) => {
+            const id = e.target?.dataset?.id || null;
+            if (id) {
+               fetch(`/post/${id}`, {
+                  method: 'DELETE',
+               }).then(() => {
+                  window.location.reload();
+               });
+            }
+         });
+      </script>
+
+</body>
+
+</html>
