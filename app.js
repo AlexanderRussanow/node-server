@@ -7,23 +7,25 @@ const methodOverride = require('method-override');
 const postRouter = require('./routes/post-routes.js');
 const contactRouter = require('./routes/contact-routes.js');
 const postApiRouter = require('./routes/api-post.router.js');
+const chalk = require('chalk');
+require('dotenv').config();
 
-// port 
-const PORT = 5555;
+// messgaes for console
+const errorMsg = chalk.bgKeyword('white').redBright;
+const successMsg = chalk.bgKeyword('green').white;
+
 // init express
 const app = express();
 // connect  ejs
 app.set('view engine', 'ejs');
-// define db
-const db = 'mongodb+srv://test-user:sKG72c9Tiu5bOCNW@cluster0.fsbva.mongodb.net/node-server?retryWrites=true&w=majority'
 // connect db
 mongoose
-   .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
-   .then((res) => console.log('Connected to MongoDB'))
-   .catch((err) => console.log(err));
+   .connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+   .then((res) => console.log(successMsg('Connected to MongoDB')))
+   .catch((err) => console.log(errorMsg(err)));
 // app listen
-app.listen(PORT, (err) => {
-   err ? console.log(err) : console.log(`Server is running on port ${PORT}`);
+app.listen(process.env.PORT, (err) => {
+   err ? console.log(err) : console.log(successMsg(`Server is running on port ${process.env.PORT}`));
 })
 // middleware
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
@@ -33,15 +35,9 @@ app.use(methodOverride('_method'));
 app.use(postRouter)
 app.use(contactRouter)
 app.use(postApiRouter)
-app.get('/', (req, res) => {
-   res.render(createPath('index'));
-})
-app.get('about-us', (req, res) => {
-   res.redirect('/contact');
-})
+app.get('/', (req, res) => res.render(createPath('index')))
+app.get('about-us', (req, res) => res.redirect('/contact'))
 // 404 error
-app.use((req, res) => {
-   res.status(404).render(createPath('error'));
-})
+app.use((req, res) => res.status(404).render(createPath('error')))
 
 
